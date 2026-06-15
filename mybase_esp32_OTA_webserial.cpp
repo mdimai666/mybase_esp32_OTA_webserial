@@ -1,10 +1,12 @@
 // mybase_esp32_OTA_webserial.cpp
 #include "mybase_esp32_OTA_webserial.h"
 
+#ifndef ESP8266
 // Определение глобальных объектов
 AsyncWebServer server(80); //http://192.168.3.89/webserial
 AsyncWebSerial webSerial;
-const int ledPin = 8;
+#endif
+const int ledPin = LED_BUILTIN;
 
 // Переменные для мигания
 unsigned long previousMillis = 0;
@@ -21,9 +23,11 @@ void setupWiFi(const char* ssid, const char* password) {
     ESP.restart();
   }
   
+  #ifndef ESP8266
   webSerial.begin(&server);
   server.begin();
   webSerial.onMessage(onMessage);
+  #endif
 }
 
 void setupOTA(const char* hostname, const char* password) {
@@ -67,6 +71,7 @@ void handleBlink() {
   }
 }
 
+#ifndef ESP8266
 void onMessage(const String& msg) {
   webSerial.print("Получено сообщение: ");
   webSerial.print(msg);
@@ -79,3 +84,4 @@ void onMessage(const String& msg) {
     webSerial.print("Светодиод ВЫКЛ");
   }
 }
+#endif
