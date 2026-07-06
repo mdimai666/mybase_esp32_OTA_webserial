@@ -26,7 +26,7 @@ void setupWiFi(const char* ssid, const char* password) {
   #ifndef ESP8266
   webSerial.begin(&server);
   server.begin();
-  webSerial.onMessage(onMessage);
+  webSerial.onMessage(defaultWebSerialHandler);
   #endif
 }
 
@@ -72,7 +72,15 @@ void handleBlink() {
 }
 
 #ifndef ESP8266
-void onMessage(const String& msg) {
+void setWebSerialHandler(WebSerialHandler handler) {
+  if (handler != nullptr) {
+    webSerial.onMessage(handler);
+  } else {
+    webSerial.onMessage(defaultWebSerialHandler);
+  }
+}
+
+void defaultWebSerialHandler(const String& msg) {
   webSerial.print("Получено сообщение: ");
   webSerial.print(msg);
   

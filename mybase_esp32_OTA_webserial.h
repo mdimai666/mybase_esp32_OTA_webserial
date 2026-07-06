@@ -9,6 +9,7 @@
 #include <WiFi.h>
 #include <ESPmDNS.h>
 #endif
+
 #include <WiFiUdp.h>
 #include <ArduinoOTA.h>
 
@@ -18,15 +19,21 @@
 //AsyncWebSerial - в ESP8266 ее использовать невозможно
 #endif
 
-#ifndef ESP8266
-extern AsyncWebServer server;  // extern означает "определено в другом месте"
-extern AsyncWebSerial webSerial;
-#endif
 extern const int ledPin;
 
 void setupWiFi(const char* ssid, const char* password);
 void setupOTA(const char* hostname, const char* password);
 void handleBlink();
-void onMessage(const String& msg);
+
+#ifndef ESP8266
+extern AsyncWebServer server;  // extern означает "определено в другом месте"
+extern AsyncWebSerial webSerial;
+// void onMessage(const String& msg);
+typedef void (*WebSerialHandler)(const String& msg);
+
+void setWebSerialHandler(WebSerialHandler handler);
+void defaultWebSerialHandler(const String& msg);
+
+#endif
 
 #endif
